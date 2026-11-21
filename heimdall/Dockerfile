@@ -5,6 +5,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY api api
 COPY policies policies
 COPY data data
+COPY kit kit
 RUN useradd --create-home heimdall && mkdir /state && chown heimdall /state
 USER heimdall
 ENV HEIMDALL_DB=/state/heimdall.sqlite3

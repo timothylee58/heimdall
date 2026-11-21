@@ -1,4 +1,9 @@
+import hashlib
+import csv
+import io
 import json
+import re
+import yaml
 from pathlib import Path
 
 LEVELS = ['public', 'internal', 'confidential', 'regulated']
@@ -14,7 +19,31 @@ def load_sources(root: Path, names: list[str]):
         path = (root / candidate).resolve()
         if not path.is_relative_to(root) or not path.is_file():
             raise ValueError('source outside trusted data root or missing')
-        doc = json.loads(path.read_text())
+        raw = path.read_bytes()
+        text = raw.decode('utf-8')
+        if path.suffix == '.json':
+            doc = json.loads(text)
+        elif path.suffix == '.md':
+            parts = text.split('---', 2)
+            if len(parts) != 3 or parts[0].strip():
+                raise ValueError('missing source sensitivity header')
+            header = yaml.safe_load(parts[1])
+            level = header.get('sensitivity')
+            level = 'confidential' if level == 'client-confidential' else level
+            body = parts[2].strip()
+            doc = dict(sensitivity=level, text=body, facts=[body] + [line.strip() for line in body.splitlines() if line.strip()], format='markdown')
+            total = re.search(r'\|\s*\*\*Total\*\*\s*\|\s*\*\*([\d,]+)\*\*', body)
+            if total:
+                doc['invoice_amount'] = float(total[1].replace(',', ''))
+        elif path.suffix == '.csv':
+            rows = list(csv.DictReader(io.StringIO(text)))
+            fields = set(rows[0]) if rows else set()
+            if not {'contact', 'email', 'phone'} <= fields:
+                raise ValueError('CSV requires trusted personal-contact schema')
+            doc = dict(sensitivity='regulated', text=text, facts=[], format='csv')
+        else:
+            raise ValueError('unsupported source format')
+        doc['raw_sha256'] = hashlib.sha256(raw).hexdigest()
         if doc.get('sensitivity') not in LEVELS or not isinstance(doc.get('text'), str):
             raise ValueError('invalid trusted source')
         docs.append({'path': name, **doc})

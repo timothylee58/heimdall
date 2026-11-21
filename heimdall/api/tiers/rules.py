@@ -1,3 +1,6 @@
+import re
+
+
 def evaluate(a, sensitivity, docs, claims, policy):
     evidence = []
     def hit(rule, tier, reason):
@@ -11,7 +14,7 @@ def evaluate(a, sensitivity, docs, claims, policy):
         else:
             hit('SCOPE', 'HOLD', 'outside declared task scope')
     if a.kind == 'read':
-        hit('READ', 'ALLOW', 'local read')
+        hit('R01', 'ALLOW', 'local read logged; any R02 block remains authoritative')
     if a.kind == 'email':
         if a.recipient == 'known' and sensitivity in ('public', 'internal'):
             hit('R03', 'ALLOW', 'known recipient and public/internal content')
@@ -19,15 +22,23 @@ def evaluate(a, sensitivity, docs, claims, policy):
             hit('R04', 'HOLD', 'sensitive email requires owner review')
         if a.recipient == 'unknown':
             hit('R05', 'HOLD', 'unknown recipient')
-    if a.kind == 'quote':
-        if a.amount == a.list_price:
+    price_commitment = re.search(r'\b(?:can match|offer|quote)\s+(?:SGD\s*)?([\d,]+)', a.text, re.I) if a.kind == 'email' else None
+    amount, list_price = a.amount, a.list_price
+    if price_commitment:
+        amount = float(price_commitment[1].replace(',', ''))
+        rates = [float(m.replace(',', '')) for d in docs for m in re.findall(r'Fee quoted: SGD ([\d,]+)', d['text'])]
+        list_price = max(rates) if rates else None
+    if a.kind == 'quote' or price_commitment:
+        if amount == list_price:
             hit('R06', 'ALLOW', 'list-price quote')
-        elif a.amount < a.list_price:
+        elif list_price is not None and amount < list_price:
             hit('R07', 'HOLD', 'discount below list')
         else:
             hit('PRICE', 'HOLD', 'non-list quote')
-        if a.customer.casefold() == 'greenstep' and a.amount < policy['greenstep_floor']:
-            hit('R08', 'BLOCK', 'Greenstep quote below floor')
+        if a.customer.casefold() in ('greenstep', 'greenstep tuition') and amount < policy['greenstep_floor']:
+            hit('R08', 'BLOCK', f"Greenstep commitment {amount:g} below written floor {policy['greenstep_floor']}")
+    if a.kind == 'email' and claims and re.search(r'\b(contract|surcharge|waiv|settle)\b', a.text, re.I):
+        hit('R09', 'HOLD', 'proposed contract/payment terms require owner review; contradictory terms cannot be sent')
     if a.kind == 'terms':
         hit('R09' if a.changed_terms else 'TERMS', 'HOLD' if a.changed_terms else 'ALLOW', 'terms review')
     if a.kind == 'invoice':
@@ -37,7 +48,7 @@ def evaluate(a, sensitivity, docs, claims, policy):
             hit('R10', 'ALLOW', 'matching invoice strictly below threshold')
         else:
             hit('R11', 'HOLD', 'threshold reached or invoice match/amount missing')
-    if a.kind == 'order':
+    if a.kind == 'order' or (a.kind == 'email' and re.search(r'\bgo ahead\b', a.text, re.I)):
         confirmed = a.written_confirmation and any(d.get('order_confirmed') is True for d in docs)
         hit('ORDER' if confirmed else 'R12', 'ALLOW' if confirmed else 'HOLD', 'trusted written confirmation check')
     if a.kind == 'upload':

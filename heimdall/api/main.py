@@ -12,7 +12,11 @@ BASE = Path(__file__).resolve().parent.parent
 
 
 def create_app(db_path=None, data_root=None, policy_path=None):
-    policy = yaml.safe_load(Path(policy_path or BASE / 'policies/default.yaml').read_text())
+    policy = yaml.safe_load(Path(policy_path or BASE / 'kit/rules/policy.json').read_text())
+    if 'owner_floors' in policy:
+        if len(policy.get('rules', [])) != 19:
+            raise ValueError('incomplete official policy')
+        policy = {**policy, 'greenstep_floor': policy['owner_floors']['Greenstep Tuition'], 'invoice_threshold': 1000}
     if not isinstance(policy, dict) or not isinstance(policy.get('version'), str) or policy.get('greenstep_floor') != 6500 or policy.get('invoice_threshold') != 1000:
         raise ValueError('unsupported local MVP policy')
     ledger = Ledger(db_path or os.environ.get('HEIMDALL_DB', str(BASE / 'heimdall.sqlite3')))

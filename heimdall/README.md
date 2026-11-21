@@ -1,6 +1,6 @@
 # Heimdall Local API MVP
 
-Deterministic Python 3.12 FastAPI/Pydantic/YAML local simulation. No dashboard, cloud deployment, video, hosted service, model service, or actual send/pay/delete/upload implementation. All executions and R17 notifications are simulated. The document kit is unavailable: R01-R19 are requested local rule identifiers, not official kit labels. No official 28-file accuracy or production enforcement is claimed.
+Deterministic Python 3.12 FastAPI/Pydantic/YAML local simulation. No dashboard, cloud deployment, video, hosted service, model service, or actual send/pay/delete/upload implementation. All executions and R17 notifications are simulated. The official starter kit is preserved byte-for-byte in `kit/`; its policy is loaded by default through a deterministic adapter. No production enforcement is claimed.
 
 ## Run
 
@@ -64,4 +64,6 @@ tests/seeded_attacks.json test_tiers.py test_classifier_vs_ground_truth.py
 Dockerfile requirements.txt .github/workflows/tests.yml
 ```
 
-Tests are deterministic synthetic assertions, not evaluation on an official kit. Coverage includes R01-R19, price/invoice boundaries, all-evidence strictest wins, contextual false matches, source traversal/symlinks, persisted approvals, denial, source-change re-evaluation, single-use decisions, payload binding, concurrent writes, and trigger/hash tampering.
+Run `.venv/bin/python official_checks.py` to replay the official proposals through the API and save `official-check-results.json`. Initial unadapted result: 0/15 and 0/27 (Markdown/CSV unsupported). Final: 15/15 and 27/27 labeled files, no mismatches. The kit contains 28 data files but only 27 ground-truth entries; `00_README.md` has neither a sensitivity header nor an expected label, so no 28/28 claim is made. S5 scores the held outbound order separately from three R02 BLOCK read events; a blocked read cannot be approved. Evidence scores require runtime excerpts/provenance, with relevance inspected manually. S3 oversight-only cash-flow context is not outbound content. S2 remains an email, with price-commitment rules; S4 uses actual contract, invoice and dispute sources. Source labels/CSV schema are legitimate inputs; ground truth is evaluator-only. Markdown facts use conservative contextual matching, not general semantic understanding. API source root defaults to the legacy fixtures for compatibility; use `create_app(data_root=BASE / 'kit/data')` for official sources. Default policy is the preserved official JSON with adapter thresholds. Docker includes the kit, but has not been built or deployed.
+
+Tests include official replay and deterministic synthetic assertions. Coverage includes R01-R19, price/invoice boundaries, all-evidence strictest wins, contextual false matches, source traversal/symlinks, persisted approvals, denial, source-change re-evaluation, single-use decisions, payload binding, concurrent writes, and trigger/hash tampering.

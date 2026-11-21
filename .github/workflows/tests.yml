@@ -1,0 +1,29 @@
+name: Backend and official checks
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: heimdall
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install -r requirements.txt
+      - run: python -m pytest -q
+      - run: python official_checks.py --output ci-official-check-results.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: official-check-results
+          path: heimdall/ci-official-check-results.json
+          if-no-files-found: warn

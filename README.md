@@ -24,19 +24,19 @@ Both frontends offer English, Bahasa Melayu, and Chinese UI. There is no root pa
 
 | Capability | Implemented here | PRD goal / remaining gap |
 | --- | --- | --- |
-| Classification | Four synthetic Lumen JSON fixtures; highest trusted label or explicit marking wins. | Official-kit public / internal / client-confidential / regulated classification, regex hints and model fallback. API calls client-confidential `confidential`. |
+| Classification | Official Markdown headers and personal-contact CSV schema plus four synthetic JSON fixtures; highest trusted label wins. | Semantic ambiguity and model fallback remain unimplemented. API calls client-confidential `confidential`. |
 | Policy, scope and facts | Deterministic local R01-R19 interpretations, floor enforcement, declared-scope checks and bounded contextual R18 matching. | Official policy/evidence validation, semantic ambiguity handling and trusted scope/destination verification. |
 | Single channel | FastAPI proposal review and an advisory agent prompt. | Every QwenWork worker tool call routed through a non-bypassable gateway, including reads. No actual gateway hooks exist here. |
 | Owner review | Connected console and persisted single-use HOLD approval/denial. | Authenticated morning queue with at-most-one notification per item. Notifications are simulated today. |
 | Audit and briefing | SQLite append-only event triggers, SHA-256 chain and plain log-derived notes. | Supabase log/queue, model-written briefing and 60-second QwenWork video. |
-| Deployment | Local React frontends, Dockerfile and nested test workflow. | Cloud Run, Upstash Redis, Supabase, model services, active root CI/CD and Hashmeta AI CMS deployment. Not demonstrated here. |
-| Evaluation | Synthetic backend and frontend tests. | Official scenarios/labels and measured latency, tokens and cost. No official 15/15, 95% over 28 files, performance, hosting-cost or compliance result is claimed. |
+| Deployment | Local React frontends, Dockerfile and root GitHub Actions checks. | Cloud Run, Upstash Redis, Supabase, model services and Hashmeta AI CMS deployment are not demonstrated. CI does not deploy. |
+| Evaluation | Official S1-S5 API replay: 15/15; classifier: 27/27 labeled files, no mismatches. Synthetic backend and frontend tests also remain. | The kit has 28 data files but only 27 labels; `00_README.md` is unscored. Latency, tokens, cost and compliance are not measured. |
 
 ## Policy And Boundaries
 
 The PRD maps **ALLOW** to proceed, **APPROVE** to **HOLD_FOR_APPROVAL**, and **NEVER** to **BLOCK**. The API uses `ALLOW`, `HOLD`, `BLOCK`; execution remains simulated. **BLOCK > HOLD > ALLOW**, retaining all matching evidence. The owner cannot approve a BLOCK, including a Greenstep quote below the SGD 6,500 floor.
 
-The PRD's S5 combines an unconfirmed reprint order (R12: HOLD) with unnecessary regulated reads (R02: BLOCK), yet lists an overall HOLD. Evaluate reads and order separately: regulated out-of-scope reads must be blocked; if combined into one proposal, BLOCK wins. Local R02 conservatively covers any regulated out-of-scope action. This is not an official S5 benchmark result.
+The PRD's S5 combines an unconfirmed reprint order (R12: HOLD) with unnecessary regulated reads (R02: BLOCK), yet lists an overall HOLD. Evaluate reads and order separately: regulated out-of-scope reads must be blocked; if combined into one proposal, BLOCK wins. Local R02 conservatively covers any regulated out-of-scope action. The official S5 replay scores the outbound HOLD separately and asserts that out-of-scope regulated reads BLOCK.
 
 - The API accepts read, email, quote, terms, invoice, order, upload, delete, and news proposals. R18 checks eligible text within proposals, not a separate `state_fact` endpoint.
 - ALLOW records `simulated`, HOLD records `pending`, and BLOCK records `blocked`. A pending HOLD accepts one approval or denial. Approval re-evaluates current sources against the original policy snapshot; BLOCK cannot be overridden. Identical payload/key submissions return persisted state; changed payloads with the same key return 409.
@@ -44,9 +44,9 @@ The PRD's S5 combines an unconfirmed reprint order (R12: HOLD) with unnecessary 
 - The showcase uses predefined scenarios and in-memory events, not API decisions or a cryptographic ledger. REWRITE / REDACT are illustrative assistance, not policy tiers. Its contact form validates locally and sends nothing. Language preference is stored in browser local storage.
 - All execution and owner notifications are simulated. Nothing sends email, pays invoices, deletes records, uploads files, or intercepts real QwenWork tools. The [agent prompt](heimdall/qwenwork/agent_prompts/local_review.txt) is advisory only.
 - Source classification uses trusted fixture labels and explicit markings, not comprehensive semantic detection. R18 uses bounded contextual matching, not a model or general fact checker. Recipient, retention, and scope declarations are not independently verified.
-- The unauthenticated API must stay local. SQLite triggers and a hash chain provide local tamper evidence, not tamper-proof storage or authenticated owner identity. Administrators can replace files or recompute a chain. No production enforcement, hosted deployment, official document-kit accuracy, or measured production performance is claimed.
+- The unauthenticated API must stay local. SQLite triggers and a hash chain provide local tamper evidence, not tamper-proof storage or authenticated owner identity. Administrators can replace files or recompute a chain. No production enforcement, hosted deployment, general semantic accuracy, or measured production performance is claimed.
 
-See the [backend README](heimdall/README.md) for trust limitations, [local rules](heimdall/rules/README.md) for provenance, [policy implementation](heimdall/api/tiers/rules.py) for matching logic, and [configuration](heimdall/policies/default.yaml) for local thresholds. The supplied PRD defines intended behavior; the official starter-kit files are not present in this implementation.
+See the [backend README](heimdall/README.md) for trust limitations, [local rules](heimdall/rules/README.md) for provenance, [policy implementation](heimdall/api/tiers/rules.py) for matching logic, and [configuration](heimdall/policies/default.yaml) for local thresholds. The unchanged official starter kit is included in `heimdall/kit/`; ground-truth labels are evaluator-only inputs.
 
 ## Intended Architecture
 
@@ -64,7 +64,7 @@ This is the **planned architecture**, not today's runtime. The PRD proposes a sm
 
 ## Roadmap And Submission
 
-1. Import and validate the unchanged official kit, reconcile policy/scenario expectations, and benchmark decisions, rule citations and evidence. Treat 15/15 and classifier accuracy of at least 95% over 28 files as targets, not results; add the PRD's S6 patient-data forwarding case.
+1. Extend the bundled-kit benchmark beyond the verified S1-S5 15/15 and 27/27 labeled classification result; add the PRD's S6 patient-data forwarding case. The 28th data file has no official label, so do not claim 28/28.
 2. Connect five QwenWork workers and scripted rogue runs to the gateway, including read checks. Preserve non-overridable floors and strictest precedence; verify routing rather than relying on prompts.
 3. Add tiered models, caching, durable cloud log/queue and one-notification behavior. Measure the PRD targets of under 1.5 seconds added latency, under 800 average tokens per check and approximately S$0/month demo hosting before claiming them.
 4. Deliver the submission package: live QwenWork application, generated 60-second briefing video, three-minute demo video, and Hashmeta AI CMS landing site. These are delivery goals, not verified deployed/generated artifacts.
@@ -147,4 +147,6 @@ Source paths are relative to the trusted data root; absolute paths, traversal, a
 
 Backend pytest tests cover synthetic policy boundaries, contextual claims, source path protections, approvals, idempotency, concurrent writes, and ledger tampering. Site Node tests cover demo transitions, form validation, and configured translations; owner Node tests cover ledger projection, decision eligibility, and filtering. These are not production or full browser end-to-end tests.
 
-A [Dockerfile](heimdall/Dockerfile) is provided but is not deployment evidence; it binds `0.0.0.0` inside the container and stores its database under `/state`. Restrict host port publishing to loopback and provide persistence deliberately. The backend [workflow](heimdall/.github/workflows/tests.yml) is nested under the project rather than root `.github/workflows/`, so it is not an active root GitHub Actions workflow as laid out here.
+A [Dockerfile](heimdall/Dockerfile) is provided but is not deployment evidence; it binds `0.0.0.0` inside the container and stores its database under `/state`. Restrict host port publishing to loopback and provide persistence deliberately.
+
+The root [workflow](.github/workflows/tests.yml) runs Python 3.12 dependency installation, pytest, and `python official_checks.py --output ci-official-check-results.json` from `heimdall/` on pushes and pull requests. It evaluates the actual API against the bundled kit, failing below 15/15 or on any labeled classifier mismatch, and uploads that fresh report. It never uses an original-kit host path or overwrites the committed historical `official-check-results.json`. Permissions are read-only; no deployment or secrets are configured.

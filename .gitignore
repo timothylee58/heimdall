@@ -2,6 +2,7 @@
 /*
 !/.gitignore
 !/README.md
+!/.github/
 !/heimdall/
 !/heimdall-site/
 !/heimdall-owner/
@@ -32,3 +33,4 @@ visual/
 coverage/
 playwright-report/
 test-results/
+heimdall/ci-official-check-results.json

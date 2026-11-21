@@ -14,7 +14,7 @@ Built for the **QwenWork x Hashmeta AI One-Person Company Hackathon**, AvePoint 
 
 | Directory | Current role |
 | --- | --- |
-| [heimdall](heimdall/README.md) | Python 3.12 FastAPI API, deterministic policies, synthetic Lumen fixtures, SQLite lifecycle and hash-chain ledger, approvals, and plain log-derived briefings. |
+| [heimdall](heimdall/README.md) | Python 3.12 FastAPI API, deterministic policies, synthetic Lumen fixtures, SQLite lifecycle and hash-chain ledger, durable PostgreSQL adapter, approvals, and plain log-derived briefings. Private Cloud Run / Cloud SQL preparation only; not deployed. |
 | [heimdall-site](heimdall-site/) | React 19 / TypeScript / Vite showcase: home, docs, and a five-scenario guided demo. No backend connection. |
 | [heimdall-owner](heimdall-owner/) | React 19 / TypeScript / Vite console connected to the local API: overview, activity search/tier filters, pending approvals, raw audit events, verification, and briefing. |
 
@@ -28,8 +28,8 @@ Both frontends offer English, Bahasa Melayu, and Chinese UI. There is no root pa
 | Policy, scope and facts | Deterministic local R01-R19 interpretations, floor enforcement, declared-scope checks and bounded contextual R18 matching. | Official policy/evidence validation, semantic ambiguity handling and trusted scope/destination verification. |
 | Single channel | FastAPI proposal review and an advisory agent prompt. | Every QwenWork worker tool call routed through a non-bypassable gateway, including reads. No actual gateway hooks exist here. |
 | Owner review | Connected console and persisted single-use HOLD approval/denial. | Authenticated morning queue with at-most-one notification per item. Notifications are simulated today. |
-| Audit and briefing | SQLite append-only event triggers, SHA-256 chain and plain log-derived notes. | Supabase log/queue, model-written briefing and 60-second QwenWork video. |
-| Deployment | Local React frontends, Dockerfile and root GitHub Actions checks. | Cloud Run, Upstash Redis, Supabase, model services and Hashmeta AI CMS deployment are not demonstrated. CI does not deploy. |
+| Audit and briefing | SQLite and PostgreSQL durable adapters, append-only protections, SHA-256 chain and plain log-derived notes. | Cloud SQL migration/live durability, backups and external anchoring remain unverified; model-written briefing and 60-second video remain goals. |
+| Deployment | Local React frontends, Dockerfile, private Cloud Run IAM / attached Cloud SQL socket preparation and root GitHub Actions checks. | Target `heimdall-515408` / `asia-southeast1`; instance, secret and service account unresolved. No deployment. Upstash, model services and Hashmeta AI CMS remain goals. CI does not deploy. |
 | Evaluation | Official S1-S5 API replay: 15/15; classifier: 27/27 labeled files, no mismatches. Synthetic backend and frontend tests also remain. | The kit has 28 data files but only 27 labels; `00_README.md` is unscored. Latency, tokens, cost and compliance are not measured. |
 
 ## Policy And Boundaries
@@ -55,12 +55,12 @@ QwenWork workers: Sales / Finance / Marketing / Ops / Support
   -> Heimdall gateway on Cloud Run
      -> classification + task scope + deterministic R01-R19 + fact checks
      -> strictest decision + rule/file evidence
-     -> Upstash content-hash cache; Supabase audit log and approval queue
+     -> Upstash content-hash cache; Cloud SQL PostgreSQL audit log and approval queue
   -> plain-language daily briefing + 60-second QwenWork video
   -> owner dashboard and Hashmeta AI CMS landing site
 ```
 
-This is the **planned architecture**, not today's runtime. The PRD proposes a small Qwen model for ambiguous classification and briefing, Qwen-Max for rare fact disputes, and deterministic checks first. Caching and short extracts are design strategies, not measured savings. Real email, payments and other side effects remain out of scope for the hackathon demo; non-bypassable proposal review still needs integration work.
+This is the **planned architecture**, not today's runtime. The selected database target is Google Cloud SQL PostgreSQL, superseding the PRD's Supabase proposal. See [private cloud preparation](heimdall/README.md#private-cloud-run-preparation) for verified Google setup references, unresolved placeholders, IAM/Secret Manager requirements and unexecuted operator templates. All Cloud Run invokers currently have approval permission; do not admit untrusted agents without separate approval authorization. The PRD proposes a small Qwen model for ambiguous classification and briefing, Qwen-Max for rare fact disputes, and deterministic checks first. Caching and short extracts are design strategies, not measured savings. Real email, payments and other side effects remain out of scope for the hackathon demo; non-bypassable proposal review still needs integration work.
 
 ## Roadmap And Submission
 
@@ -149,4 +149,4 @@ Backend pytest tests cover synthetic policy boundaries, contextual claims, sourc
 
 A [Dockerfile](heimdall/Dockerfile) is provided but is not deployment evidence; it binds `0.0.0.0` inside the container and stores its database under `/state`. Restrict host port publishing to loopback and provide persistence deliberately.
 
-The root [workflow](.github/workflows/tests.yml) runs Python 3.12 dependency installation, pytest, and `python official_checks.py --output ci-official-check-results.json` from `heimdall/` on pushes and pull requests. It evaluates the actual API against the bundled kit, failing below 15/15 or on any labeled classifier mismatch, and uploads that fresh report. It never uses an original-kit host path or overwrites the committed historical `official-check-results.json`. Permissions are read-only; no deployment or secrets are configured.
+The root [workflow](.github/workflows/tests.yml) provisions a disposable PostgreSQL 17 service (restricted-login integration tests do not skip), runs Python 3.12 dependency installation, pytest, and `python official_checks.py --output ci-official-check-results.json` from `heimdall/` on pushes and pull requests. It evaluates the actual API against the bundled kit, failing below 15/15 or on any labeled classifier mismatch, and uploads that fresh report. It never uses an original-kit host path or overwrites the committed historical `official-check-results.json`. Permissions are read-only; no deployment or secrets are configured.

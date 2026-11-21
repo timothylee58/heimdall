@@ -3,6 +3,8 @@ def briefing(ledger):
     lines = ['Heimdall local owner briefing', f"Audit valid: {report['verification']['valid']}", 'All execution and notifications are simulated.']
     for entry in report['events']:
         event = entry['event']
+        if event.get('type') == 'state':
+            continue
         result = event['result']
         lines.append(f"{entry['seq']}. {result['key']}: {result['tier']} / {result['status']}")
         if event['type'] == 'approval':

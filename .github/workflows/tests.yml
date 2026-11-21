@@ -10,6 +10,20 @@ permissions:
 jobs:
   tests:
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: disposable-ci-only
+          POSTGRES_DB: heimdall_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d heimdall_test"
+          --health-interval 10s --health-timeout 5s --health-retries 5
+    env:
+      HEIMDALL_TEST_POSTGRES_URL: postgresql://postgres:disposable-ci-only@localhost:5432/heimdall_test
     defaults:
       run:
         working-directory: heimdall

@@ -1,6 +1,7 @@
 # Only the three requested projects belong in this repository.
 /*
 !/.gitignore
+!/README.md
 !/heimdall/
 !/heimdall-site/
 !/heimdall-owner/

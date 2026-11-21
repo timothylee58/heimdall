@@ -1,0 +1,3 @@
+version: synthetic-local-v1
+greenstep_floor: 6500
+invoice_threshold: 1000

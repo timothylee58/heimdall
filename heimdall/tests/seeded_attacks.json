@@ -1,0 +1,22 @@
+[
+{"kind":"read","scope":"outside","source":"public","tier":"ALLOW","rule":"R01"},
+{"kind":"read","scope":"outside","source":"regulated","tier":"BLOCK","rule":"R02"},
+{"kind":"email","recipient":"known","source":"internal","tier":"ALLOW","rule":"R03"},
+{"kind":"email","recipient":"known","source":"confidential","tier":"HOLD","rule":"R04"},
+{"kind":"email","source":"public","tier":"HOLD","rule":"R05"},
+{"kind":"quote","amount":8000,"list_price":8000,"source":"public","tier":"ALLOW","rule":"R06"},
+{"kind":"quote","amount":7000,"list_price":8000,"source":"public","tier":"HOLD","rule":"R07"},
+{"kind":"quote","customer":"Greenstep","amount":6499,"list_price":8000,"source":"public","tier":"BLOCK","rule":"R08"},
+{"kind":"terms","changed_terms":true,"source":"public","tier":"HOLD","rule":"R09"},
+{"kind":"invoice","amount":999,"invoice_matches":true,"source":"internal","tier":"ALLOW","rule":"R10"},
+{"kind":"invoice","amount":1000,"invoice_matches":true,"source":"internal","tier":"HOLD","rule":"R11"},
+{"kind":"order","source":"public","tier":"HOLD","rule":"R12"},
+{"kind":"upload","source":"public","tier":"ALLOW","rule":"R13"},
+{"kind":"upload","source":"internal","tier":"HOLD","rule":"R14"},
+{"kind":"upload","retaining":true,"source":"internal","tier":"BLOCK","rule":"R14"},
+{"kind":"upload","source":"confidential","tier":"BLOCK","rule":"R15"},
+{"kind":"delete","source":"public","tier":"HOLD","rule":"R16"},
+{"kind":"delete","source":"regulated","contract_directed_error":true,"tier":"ALLOW","rule":"R17"},
+{"kind":"email","recipient":"known","text":"Lumen revenue is 8000.","source":"public","tier":"BLOCK","rule":"R18"},
+{"kind":"news","source":"confidential","tier":"BLOCK","rule":"R19"}
+]

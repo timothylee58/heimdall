@@ -1,0 +1,4 @@
+export type Result={key:string;tier:'ALLOW'|'HOLD'|'BLOCK';status:string;sensitivity:string;execution:string;evidence:{rule:string;tier:string;reason:string}[];provenance:{path:string;sha256:string}[];claims:unknown[];owner_note?:string;notification?:string};
+export type Row={seq:number;previous:string;digest:string;event:{type:string;result:Result;payload?:Record<string,unknown>;policy?:Record<string,unknown>;decision?:{decision:string;owner_note:string};key?:string};payload?:Record<string,unknown>};
+export type Verification={valid:boolean;count:number;head?:string;failure_seq?:number};
+export type Report={verification:Verification;events:Row[]};

@@ -4,7 +4,7 @@
 
 **A governance layer for the solo founder who has AI workers, but no team to check their work.**
 
-Heimdall is designed to sit between a founder's agents and the outside world: check what they read and propose, catch sensitive-data leaks, unsupported figures and policy breaches, then explain each decision in plain language. The goal is **governance legibility**, not another technical monitoring dashboard.
+Inspired by the guardian god character of the Bifröst bridge in Norse mythology - Heimdall is designed to sit between a founder's agents and the outside world: check what they read and propose, catch sensitive-data leaks, unsupported figures and policy breaches, then explain each decision in plain language. The goal is **governance legibility**, not another technical monitoring dashboard.
 
 The PRD's target user is the non-technical owner of **Lumen Studio**, a one-person Singapore design studio delegating Sales, Finance, Marketing, Ops and Support to QwenWork agents. Every owner note should answer: *What did the agent try? What happened? Why, with rule and file evidence? What can I do next?*
 
